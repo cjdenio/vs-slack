@@ -2,23 +2,8 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { RTMClient } from "@slack/rtm-api";
 import { WebClient } from "@slack/web-api";
-import { isDate } from "node:util";
 
 let panel: vscode.WebviewPanel | undefined = undefined;
-
-async function getChannels(client: WebClient): Promise<vscode.QuickPickItem[]> {
-  const resp = await client.users.conversations({
-    exclude_archived: true,
-    limit: 1000,
-  });
-
-  return (resp.channels as any).map((i: any) => {
-    return {
-      label: `#${i.name}`,
-      description: i.topic.value || null,
-    };
-  });
-}
 
 function channelGetter(client: WebClient) {
   return {
