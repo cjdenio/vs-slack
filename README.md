@@ -2,7 +2,7 @@
 
 Slack integration for VS Code.
 
-![screenshot](img/screenshot.png)
+![screenshot](./img/screenshot.png)
 
 ## Project status
 
