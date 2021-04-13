@@ -3,7 +3,7 @@
   "displayName": "vs-slack",
   "publisher": "CalebDenio",
   "description": "Slack integration for VS Code that's actually useful.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.46.0"
   },
