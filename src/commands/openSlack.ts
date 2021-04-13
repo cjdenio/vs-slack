@@ -158,6 +158,10 @@ export default (context: vscode.ExtensionContext) =>
                 },
               });
               break;
+            case "typing":
+              console.log("typing");
+              await rtm.sendTyping(channelId);
+              break;
           }
         },
         undefined,

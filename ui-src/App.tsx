@@ -59,6 +59,12 @@ export default () => {
     });
   };
 
+  const sendTypingIndicator = () => {
+    vscode.postMessage({
+      cmd: "typing",
+    });
+  };
+
   return (
     <div
       style={{
@@ -94,6 +100,7 @@ export default () => {
           placeholder="Message"
           style={{ flex: 1, marginRight: 10 }}
           ref={input}
+          onInput={() => sendTypingIndicator()}
         />
         <button
           type="submit"
