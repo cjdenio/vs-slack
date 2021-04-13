@@ -1,7 +1,7 @@
 import React from "react";
 import { Message } from "../types/Message";
 
-export default ({ text, username, avatar }: Message) => {
+export default ({ text, username, avatar, ts }: Message) => {
   return (
     <div className="message">
       <img className="message-avatar" src={avatar} />

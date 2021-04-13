@@ -18,10 +18,28 @@ export default () => {
   });
 
   const onMessage = (e: MessageEvent) => {
-    const { data } = e;
-    switch (data.cmd) {
+    const {
+      data: { data, cmd },
+    } = e;
+    switch (cmd) {
       case "msg":
-        setMessages([...messages, data.data]);
+        setMessages([...messages, data]);
+        break;
+      case "msgs":
+        data.reverse();
+        setMessages([...messages, ...data]);
+        break;
+      case "msgedit":
+        setMessages(
+          messages.map((i) => {
+            return i.ts == data.ts ? { ...i, text: data.text } : i;
+          })
+        );
+        break;
+      case "msgdel":
+        console.log(`deleting ${data.ts}`);
+        setMessages(messages.filter((i) => i.ts != data.ts));
+        break;
     }
   };
 

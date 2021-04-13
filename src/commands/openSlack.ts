@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { RTMClient } from "@slack/rtm-api";
 import { WebClient } from "@slack/web-api";
+import { ClientRequest } from "node:http";
 
 let panel: vscode.WebviewPanel | undefined = undefined;
 
@@ -80,7 +81,7 @@ export default (context: vscode.ExtensionContext) =>
       );
       panel.webview.html = getWebviewContent(bundleSrc);
 
-      // Cache user avatars/username
+      // Cache user avatars/usernames
       const users: { [id: string]: { username: string; avatar: string } } = {};
 
       const userInfo = async (
@@ -104,20 +105,37 @@ export default (context: vscode.ExtensionContext) =>
       };
 
       rtm.on("message", async (event) => {
-        if (!event.subtype && event.channel == channelId) {
+        if (event.channel == channelId) {
           console.log(event);
 
-          const user = await userInfo(event.user);
+          if (!event.subtype) {
+            const user = await userInfo(event.user);
 
-          panel?.webview.postMessage({
-            cmd: "msg",
-            data: {
-              username: user.username,
-              text: event.text,
-              avatar: user.avatar,
-              ts: event.ts,
-            },
-          });
+            panel?.webview.postMessage({
+              cmd: "msg",
+              data: {
+                username: user.username,
+                text: event.text,
+                avatar: user.avatar,
+                ts: event.ts,
+              },
+            });
+          } else if (event.subtype == "message_changed") {
+            panel?.webview.postMessage({
+              cmd: "msgedit",
+              data: {
+                text: event.message.text,
+                ts: event.message.ts,
+              },
+            });
+          } else if (event.subtype == "message_deleted") {
+            panel?.webview.postMessage({
+              cmd: "msgdel",
+              data: {
+                ts: event.deleted_ts,
+              },
+            });
+          }
         }
       });
 
@@ -157,6 +175,29 @@ export default (context: vscode.ExtensionContext) =>
         {},
         context.subscriptions
       );
+
+      // Send first 15 messages
+      const messages = await slack.conversations.history({
+        channel: channelId,
+        limit: 15,
+      });
+
+      panel.webview.postMessage({
+        cmd: "msgs",
+        data: await Promise.all(
+          (messages.messages as any[]).map(
+            async ({ text, ts, user: userId }) => {
+              const user = await userInfo(userId);
+              return {
+                text,
+                ts,
+                avatar: user.avatar,
+                username: user.username,
+              };
+            }
+          )
+        ),
+      });
     } else {
       panel.reveal();
     }
