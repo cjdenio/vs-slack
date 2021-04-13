@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { RTMClient } from "@slack/rtm-api";
 import { WebClient } from "@slack/web-api";
-import { ClientRequest } from "node:http";
 
 let panel: vscode.WebviewPanel | undefined = undefined;
 
