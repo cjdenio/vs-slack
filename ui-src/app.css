@@ -1,0 +1,59 @@
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+button {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+
+  cursor: pointer;
+  border: none;
+
+  font-size: 15px;
+  padding: 6px 8px;
+}
+
+button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+input {
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 2px solid var(--vscode-input-border);
+
+  font-size: 15px;
+  padding: 6px 8px;
+}
+input::placeholder {
+  color: var(--vscode-input-placeholderForeground);
+}
+
+.message {
+  display: flex;
+  margin-top: 10px;
+  align-items: start;
+}
+
+.message-avatar {
+  width: 40px;
+  height: auto;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+.message-content {
+  display: "flex";
+  flex-direction: column;
+}
+.message-username {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.message-username,
+.message-text {
+  font-family: 20px;
+}
