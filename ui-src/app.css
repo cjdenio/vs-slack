@@ -57,3 +57,7 @@ input::placeholder {
 .message-text {
   font-family: 20px;
 }
+
+.message-text p {
+  margin: 0;
+}

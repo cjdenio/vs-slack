@@ -7,7 +7,9 @@ const vscode = acquireVsCodeApi();
 
 export default () => {
   const [messages, setMessages] = useState<Message[]>([]);
+
   const input = useRef(null);
+  const messagesContainer = useRef(null);
 
   useEffect(() => {
     window.addEventListener("message", onMessage);
@@ -15,6 +17,11 @@ export default () => {
     return () => {
       window.removeEventListener("message", onMessage);
     };
+  });
+
+  useEffect(() => {
+    messagesContainer.current.scrollTop =
+      messagesContainer.current.scrollHeight;
   });
 
   const onMessage = (e: MessageEvent) => {
@@ -58,11 +65,17 @@ export default () => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        padding: "10px 50px",
         boxSizing: "border-box",
       }}
     >
-      <div style={{ flex: 1, overflow: "auto" }}>
+      <div
+        style={{
+          flex: 1,
+          overflow: "auto",
+          padding: "10px 50px",
+        }}
+        ref={messagesContainer}
+      >
         {messages.map((message) => {
           return <UIMessage key={message.ts} {...message} />;
         })}
@@ -72,8 +85,8 @@ export default () => {
         style={{
           display: "flex",
           width: "100%",
-          // padding: "10px 0px",
           boxSizing: "border-box",
+          padding: "10px 50px",
         }}
       >
         <input
