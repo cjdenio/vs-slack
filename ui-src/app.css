@@ -61,3 +61,7 @@ input::placeholder {
 .message-text p {
   margin: 0;
 }
+.typing {
+  color: var(--vscode-input-placeholderForeground);
+  font-size: 12px;
+}

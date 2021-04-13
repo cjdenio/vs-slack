@@ -88,14 +88,16 @@ export default (context: vscode.ExtensionContext) =>
       ): Promise<{ username: string; avatar: string }> => {
         if (users[id]) {
           console.log(`cached result for ${id}`);
-          console.log(users);
           return users[id];
         }
 
-        const user_obj = await slack.users.info({ user: id });
+        const { profile } = (await slack.users.profile.get({
+          user: id,
+        })) as any;
+
         const user = {
-          username: (user_obj.user as any).real_name,
-          avatar: (user_obj.user as any).profile.image_original,
+          username: profile.display_name || profile.real_name,
+          avatar: profile.image_48,
         };
 
         users[id] = user;
@@ -107,7 +109,7 @@ export default (context: vscode.ExtensionContext) =>
         if (event.channel == channelId) {
           console.log(event);
 
-          if (!event.subtype) {
+          if (!event.subtype && !event.thread_ts) {
             const user = await userInfo(event.user);
 
             panel?.webview.postMessage({
@@ -135,6 +137,18 @@ export default (context: vscode.ExtensionContext) =>
               },
             });
           }
+        }
+      });
+
+      rtm.on("user_typing", async (event) => {
+        if (event.channel == channelId) {
+          panel?.webview.postMessage({
+            cmd: "typing",
+            data: {
+              username: (await userInfo(event.user)).username,
+              id: event.user,
+            },
+          });
         }
       });
 
