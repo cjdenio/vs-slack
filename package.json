@@ -3,6 +3,10 @@
   "displayName": "vs-slack",
   "publisher": "CalebDenio",
   "description": "Slack integration for VS Code that's actually useful.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cjdenio/vs-slack"
+  },
   "version": "0.2.0",
   "engines": {
     "vscode": "^1.46.0"
