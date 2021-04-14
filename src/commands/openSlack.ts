@@ -76,7 +76,7 @@ export default (context: vscode.ExtensionContext) =>
       );
 
       const bundleSrc = panel.webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, "out", "ui.js"))
+        vscode.Uri.file(path.join(context.extensionPath, "ui", "dist", "ui.js"))
       );
       panel.webview.html = getWebviewContent(bundleSrc);
 

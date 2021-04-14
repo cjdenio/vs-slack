@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = (env, argv) => ({
-  entry: "./ui-src/index.tsx",
+  entry: "./src/index.tsx",
 
   module: {
     rules: [
@@ -10,9 +10,6 @@ module.exports = (env, argv) => ({
         test: /\.tsx?$/,
         loader: "ts-loader",
         exclude: /node_modules/,
-        options: {
-          configFile: "ui.tsconfig.json",
-        },
       },
       {
         test: /\.css$/,
@@ -26,6 +23,6 @@ module.exports = (env, argv) => ({
 
   output: {
     filename: "ui.js",
-    path: path.resolve(__dirname, "out"), // Compile into a folder called "dist"
+    path: path.resolve(__dirname, "dist"), // Compile into a folder called "dist"
   },
 });
