@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/cjdenio/vs-slack"
   },
-  "version": "0.6.0",
+  "version": "0.7.0",
   "engines": {
     "vscode": "^1.46.0"
   },
