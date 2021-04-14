@@ -1,12 +1,14 @@
 import React from "react";
 import { Message } from "../types/Message";
 
+import Reaction from "./Reaction";
+
 import MarkdownIt from "markdown-it";
 import MarkdownItSlack from "markdown-it-slack";
 
 const md = MarkdownIt().use(MarkdownItSlack);
 
-export default ({ text, username, avatar, ts }: Message) => {
+export default ({ text, username, avatar, ts, reactions }: Message) => {
   return (
     <div className="message">
       <img className="message-avatar" src={avatar} />
@@ -16,6 +18,18 @@ export default ({ text, username, avatar, ts }: Message) => {
           className="message-text"
           dangerouslySetInnerHTML={{ __html: md.render(text) }}
         />
+        {reactions.length > 0 && (
+          <div style={{ display: "flex", marginTop: 5, flexWrap: "wrap" }}>
+            {reactions.map(({ count, name }) => (
+              <Reaction
+                key={name}
+                num={count}
+                emoji={name}
+                highlighted={false}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

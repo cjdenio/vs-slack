@@ -48,6 +48,7 @@ input::placeholder {
 .message-content {
   display: "flex";
   flex-direction: column;
+  align-items: flex-start;
 }
 .message-username {
   font-weight: bold;
@@ -56,6 +57,7 @@ input::placeholder {
 .message-username,
 .message-text {
   font-family: 20px;
+  word-wrap: break-word;
 }
 
 .message-text p {
@@ -64,4 +66,22 @@ input::placeholder {
 .typing {
   color: var(--vscode-input-placeholderForeground);
   font-size: 12px;
+}
+
+.reaction {
+  border: 2px solid var(--vscode-input-border);
+  padding: 0px 8px 1px 8px;
+  border-radius: 1000px;
+
+  display: flex;
+  align-items: center;
+
+  margin-right: 3px;
+  margin-top: 3px;
+
+  font-family: 12px;
+}
+
+.reaction .reaction-emoji {
+  margin-right: 8px;
 }

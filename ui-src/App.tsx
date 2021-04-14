@@ -97,6 +97,47 @@ export default () => {
           );
         }
         break;
+      case "reaction":
+        console.log("got reaction");
+        setMessages(
+          messages.map((m) => {
+            if (m.ts == data.ts) {
+              const reactionIndex = m.reactions.findIndex(
+                (v) => v.name == data.reaction
+              );
+
+              if (reactionIndex != -1) {
+                m.reactions[reactionIndex].count++;
+              } else {
+                m.reactions.push({
+                  name: data.reaction,
+                  count: 1,
+                });
+              }
+            }
+            return m;
+          })
+        );
+        break;
+      case "reactionRemoved":
+        setMessages(
+          messages.map((m) => {
+            if (m.ts == data.ts) {
+              const reactionIndex = m.reactions.findIndex(
+                (v) => v.name == data.reaction
+              );
+
+              if (reactionIndex != -1) {
+                m.reactions[reactionIndex].count--;
+
+                if (m.reactions[reactionIndex].count == 0) {
+                  m.reactions.splice(reactionIndex, 1);
+                }
+              }
+            }
+            return m;
+          })
+        );
     }
   };
 
@@ -133,7 +174,24 @@ export default () => {
         ref={messagesContainer}
       >
         {messages.map((message) => {
-          return <UIMessage key={message.ts} {...message} />;
+          return (
+            <UIMessage
+              key={message.ts}
+              reactions={
+                {
+                  // "🚀": [{ username: "Caleb" }, { username: "ricey" }],
+                  // "🧲": [{ username: "ricey" }],
+                  // "🦀": [{ username: "ricey" }],
+                  // "🍇": [{ username: "ricey" }],
+                  // "🥺": [{ username: "ricey" }],
+                  // "😭": [{ username: "ricey" }],
+                  // "🐢": [{ username: "ricey" }],
+                  // "🚨": [{ username: "ricey" }],
+                }
+              }
+              {...message}
+            />
+          );
         })}
       </div>
       <form

@@ -119,6 +119,7 @@ export default (context: vscode.ExtensionContext) =>
                 text: event.text,
                 avatar: user.avatar,
                 ts: event.ts,
+                reactions: [],
               },
             });
           } else if (event.subtype == "message_changed") {
@@ -152,6 +153,30 @@ export default (context: vscode.ExtensionContext) =>
         }
       });
 
+      rtm.on("reaction_added", (event) => {
+        if (event.item.channel == channelId) {
+          panel?.webview.postMessage({
+            cmd: "reaction",
+            data: {
+              reaction: event.reaction,
+              ts: event.item.ts,
+            },
+          });
+        }
+      });
+
+      rtm.on("reaction_removed", (event) => {
+        if (event.item.channel == channelId) {
+          panel?.webview.postMessage({
+            cmd: "reactionRemoved",
+            data: {
+              reaction: event.reaction,
+              ts: event.item.ts,
+            },
+          });
+        }
+      });
+
       panel.webview.onDidReceiveMessage(
         async (msg) => {
           const { cmd, data } = msg;
@@ -168,6 +193,7 @@ export default (context: vscode.ExtensionContext) =>
                   text: data.text,
                   avatar: user.avatar,
                   ts: message.ts,
+                  reactions: [],
                 },
               });
               break;
@@ -199,17 +225,20 @@ export default (context: vscode.ExtensionContext) =>
         limit: 15,
       });
 
+      console.log(messages);
+
       panel.webview.postMessage({
         cmd: "msgs",
         data: await Promise.all(
           (messages.messages as any[]).map(
-            async ({ text, ts, user: userId }) => {
+            async ({ text, ts, user: userId, reactions }) => {
               const user = await userInfo(userId);
               return {
                 text,
                 ts,
                 avatar: user.avatar,
                 username: user.username,
+                reactions: reactions || [],
               };
             }
           )

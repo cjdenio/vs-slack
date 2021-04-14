@@ -3,4 +3,5 @@ export interface Message {
   username: string;
   avatar: string;
   ts: string;
+  reactions: { name: string; count: number }[];
 }
