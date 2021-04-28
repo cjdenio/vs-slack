@@ -7,7 +7,9 @@ export default (props: {
 }) => {
   return (
     <div className={`reaction ${props.highlighted ? "highlighted" : ""}`}>
-      <span className="reaction-emoji">:{props.emoji}:</span>
+      <span className="reaction-emoji">
+        <img src="https://emoji.slack-edge.com/T0266FRGM/upvote/200c668ba60cae23.png" />
+      </span>
       <span className="reaction-number">
         <b>{props.num}</b>
       </span>

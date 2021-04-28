@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Message } from "./types/Message";
+import { Message } from "../../src/types";
 
 import UIMessage from "./components/Message";
-
-const vscode = acquireVsCodeApi();
+import WebviewCommunicator from "./util/communicator";
+import useMessages from "./lib/messages";
+import communicator from "./conn";
 
 function renderTyping(usernames: string[]): string {
   if (usernames.length == 0) return "";
@@ -17,13 +18,13 @@ function renderTyping(usernames: string[]): string {
 }
 
 export default () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messages } = useMessages(communicator);
   const [typing, setTyping] = useState<
     { username: string; id: string; timeout: NodeJS.Timeout }[]
   >([]);
 
   function stopTypingIndicator(user: string) {
-    setTyping(typing.filter((i) => i.id != user));
+    setTyping(typing.filter((i) => i.id !== user));
     console.log("stopped for " + user);
   }
 
@@ -33,127 +34,30 @@ export default () => {
   useEffect(() => {
     window.addEventListener("message", onMessage);
 
+    communicator.send("msg", { text: "text" }).then((resp) => {
+      console.log("Response: " + resp);
+    });
+
     return () => {
       window.removeEventListener("message", onMessage);
     };
-  });
+  }, []);
 
   useEffect(() => {
     messagesContainer.current.scrollTop =
       messagesContainer.current.scrollHeight;
-  });
+  }, [messages]);
 
   const onMessage = (e: MessageEvent) => {
-    const {
-      data: { data, cmd },
-    } = e;
-    switch (cmd) {
-      case "msg":
-        setMessages([...messages, data]);
-        break;
-      case "msgs":
-        data.reverse();
-        setMessages([...messages, ...data]);
-        break;
-      case "msgedit":
-        setMessages(
-          messages.map((i) => {
-            return i.ts == data.ts ? { ...i, text: data.text } : i;
-          })
-        );
-        break;
-      case "msgdel":
-        console.log(`deleting ${data.ts}`);
-        setMessages(messages.filter((i) => i.ts != data.ts));
-        break;
-      case "typing":
-        console.log("typing " + data.id);
-        if (!typing.some((i) => i.id == data.id)) {
-          // console.log(typing);
-          // console.log(data.id);
-
-          console.log("set " + data.id);
-          setTyping([
-            ...typing,
-            {
-              ...data,
-              timeout: setTimeout(() => stopTypingIndicator(data.id), 6000),
-            },
-          ]);
-        } else {
-          // they're already typing
-          setTyping(
-            typing.map((i) => {
-              if (i.id == data.id) {
-                console.log("reset " + i.id);
-                clearTimeout(i.timeout);
-
-                i.timeout = setTimeout(() => stopTypingIndicator(i.id), 6000);
-                return i;
-              } else {
-                return i;
-              }
-            })
-          );
-        }
-        break;
-      case "reaction":
-        console.log("got reaction");
-        setMessages(
-          messages.map((m) => {
-            if (m.ts == data.ts) {
-              const reactionIndex = m.reactions.findIndex(
-                (v) => v.name == data.reaction
-              );
-
-              if (reactionIndex != -1) {
-                m.reactions[reactionIndex].count++;
-              } else {
-                m.reactions.push({
-                  name: data.reaction,
-                  count: 1,
-                });
-              }
-            }
-            return m;
-          })
-        );
-        break;
-      case "reactionRemoved":
-        setMessages(
-          messages.map((m) => {
-            if (m.ts == data.ts) {
-              const reactionIndex = m.reactions.findIndex(
-                (v) => v.name == data.reaction
-              );
-
-              if (reactionIndex != -1) {
-                m.reactions[reactionIndex].count--;
-
-                if (m.reactions[reactionIndex].count == 0) {
-                  m.reactions.splice(reactionIndex, 1);
-                }
-              }
-            }
-            return m;
-          })
-        );
-    }
+    console.log(e.data);
   };
 
   const sendMessage = (text: string) => {
-    vscode.postMessage({
-      cmd: "msg",
-      data: {
-        text,
-      },
-    });
+    communicator.send("msg", { text });
   };
 
   const sendTypingIndicator = () => {
-    vscode.postMessage({
-      cmd: "typing",
-    });
+    communicator.send("typing", {});
   };
 
   return (

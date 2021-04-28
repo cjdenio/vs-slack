@@ -16,7 +16,8 @@
   ],
   "activationEvents": [
     "onCommand:vs-slack.openSlack",
-    "onCommand:vs-slack.login"
+    "onCommand:vs-slack.login",
+    "onCommand:vs-slack.logout"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -28,6 +29,10 @@
       {
         "command": "vs-slack.login",
         "title": "vs-slack: Log in to Slack"
+      },
+      {
+        "command": "vs-slack.logout",
+        "title": "vs-slack: Log out"
       }
     ]
   },

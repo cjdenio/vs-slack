@@ -69,6 +69,15 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand("vs-slack.logout", async () => {
+      await context.secrets.delete("vs-slack.token");
+      vscode.window.showInformationMessage(
+        "You've successfully been logged out! 🎉"
+      );
+    })
+  );
+
   context.subscriptions.push(openSlack(context));
 }
 

@@ -41,9 +41,17 @@ input::placeholder {
 
 .message-avatar {
   width: 40px;
-  height: auto;
+  height: 40px;
+  flex-basis: 40px;
+  flex-grow: 0;
+  flex-shrink: 0;
+
   margin-right: 10px;
   border-radius: 5px;
+
+  background-color: rgba(0, 0, 0, 0.2);
+  background-size: cover;
+  background-position: center center;
 }
 .message-content {
   display: "flex";
@@ -54,6 +62,13 @@ input::placeholder {
   font-weight: bold;
   margin-bottom: 5px;
 }
+.message-username.loading {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 1000px;
+  height: 1em;
+  width: 100px;
+}
+
 .message-username,
 .message-text {
   font-family: 20px;
@@ -84,4 +99,8 @@ input::placeholder {
 
 .reaction .reaction-emoji {
   margin-right: 8px;
+}
+
+.reaction-emoji img {
+  width: 15px;
 }
