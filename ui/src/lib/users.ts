@@ -1,33 +1,13 @@
-import { useEffect, useState } from "react";
 import { Profile } from "../../../src/types";
 import communicator from "../conn";
-import WebviewCommunicator from "../util/communicator";
+import useSWR from "swr";
 
-const userCache: { [id: string]: Profile } = {};
-
-export default function useUsers(ids: string[]) {
-  const [users, setUsers] = useState<{ profile: Profile; loading: boolean }[]>(
-    new Array(ids.length).fill({ profile: {}, loading: true })
+export default function useUser(id: string): Profile | null {
+  const { data: user } = useSWR<Profile>(id, (user) =>
+    communicator.send("users.profile.get", { user })
   );
 
-  useEffect(() => {
-    Promise.all(
-      ids.map(async (user) => {
-        if (userCache[user]) {
-          console.log("cache");
-          return userCache[user];
-        }
-        return await communicator.send("users.profile.get", { user });
-      })
-    ).then((fetchedUsers) => {
-      setUsers(
-        fetchedUsers.map((i: Profile, index) => {
-          userCache[ids[index]] = i;
-          return { profile: i, loading: false };
-        })
-      );
-    });
-  }, []);
+  console.log(`DATA: ${JSON.stringify(user)}`);
 
-  return users;
+  return user;
 }

@@ -19,29 +19,9 @@ function renderTyping(usernames: string[]): string {
 
 export default () => {
   const { messages } = useMessages(communicator);
-  const [typing, setTyping] = useState<
-    { username: string; id: string; timeout: NodeJS.Timeout }[]
-  >([]);
-
-  function stopTypingIndicator(user: string) {
-    setTyping(typing.filter((i) => i.id !== user));
-    console.log("stopped for " + user);
-  }
 
   const input = useRef(null);
   const messagesContainer = useRef(null);
-
-  useEffect(() => {
-    window.addEventListener("message", onMessage);
-
-    communicator.send("msg", { text: "text" }).then((resp) => {
-      console.log("Response: " + resp);
-    });
-
-    return () => {
-      window.removeEventListener("message", onMessage);
-    };
-  }, []);
 
   useEffect(() => {
     messagesContainer.current.scrollTop =
@@ -134,7 +114,7 @@ export default () => {
         }}
       >
         <div className="typing">
-          {renderTyping(typing.map((i) => i.username))}
+          {renderTyping(["Caleb", "Matt Gleich", "bean"])}
         </div>
       </div>
     </div>
